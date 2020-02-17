@@ -28,7 +28,7 @@ class Example(QMainWindow):
     def keyPressEvent(self, event):
         max_spn = 85.0
         min_spn = 0.001
-        if event.key() == Qt.Key_Up:
+        if event.key() == Qt.Key_PageUp:
             delta = 0.5
             data = list(map(float, self.spn.split(',')))
             data[0] *= (1 + delta)
@@ -40,7 +40,7 @@ class Example(QMainWindow):
                 data[1] = max_spn
             self.spn = ','.join(list(map(str, data)))
             self.update_image()
-        elif event.key() == Qt.Key_Down:
+        elif event.key() == Qt.Key_PageDown:
             delta = 0.5
             data = list(map(float, self.spn.split(',')))
             data[0] *= (1 - delta)
@@ -51,7 +51,6 @@ class Example(QMainWindow):
                 data[1] = min_spn
             self.spn = ','.join(list(map(str, data)))
             self.update_image()
-        print(self.spn)
 
     def getImage(self):
         map_api_server = "http://static-maps.yandex.ru/1.x/"
