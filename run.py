@@ -12,8 +12,10 @@ SCREEN_SIZE = [600, 450]
 class Example(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.ll = "37.530887,55.703118"
-        self.spn = "0.002,0.002"
+        # self.ll = "37.530887,55.703118"
+        self.ll = "85.0,85.0"
+        # self.spn = "0.002,0.002"
+        self.spn = "85.0,85.0"
         self.l = "map"
         self.initUI()
         self.update_image()
@@ -28,6 +30,8 @@ class Example(QMainWindow):
     def keyPressEvent(self, event):
         max_spn = 85.0
         min_spn = 0.001
+        delta_move_up_down = 85 / 180
+        delta_move_left_right = 1
         if event.key() == Qt.Key_PageUp:
             delta = 0.5
             data = list(map(float, self.spn.split(',')))
@@ -35,11 +39,9 @@ class Example(QMainWindow):
             data[1] *= (1 + delta)
             if data[0] > max_spn:
                 data[0] = max_spn
-
             if data[1] > max_spn:
                 data[1] = max_spn
             self.spn = ','.join(list(map(str, data)))
-            self.update_image()
         elif event.key() == Qt.Key_PageDown:
             delta = 0.5
             data = list(map(float, self.spn.split(',')))
@@ -50,8 +52,39 @@ class Example(QMainWindow):
             if data[1] < min_spn:
                 data[1] = min_spn
             self.spn = ','.join(list(map(str, data)))
-            self.update_image()
+        elif event.key() == Qt.Key_Up:
+            data = list(map(float, self.ll.split(',')))
+            spn = list(map(float, self.spn.split(',')))
+            data[1] += spn[1] * delta_move_up_down
+            if data[1] > 85:
+                data[1] = 85
+            self.ll = ','.join(list(map(str, data)))
+        elif event.key() == Qt.Key_Down:
+            data = list(map(float, self.ll.split(',')))
+            spn = list(map(float, self.spn.split(',')))
+            data[1] -= spn[1] * delta_move_up_down
+            if data[1] < -85:
+                data[1] = -85
+            self.ll = ','.join(list(map(str, data)))
+        elif event.key() == Qt.Key_Left:
+            data = list(map(float, self.ll.split(',')))
+            spn = list(map(float, self.spn.split(',')))
+            data[0] -= spn[0] * delta_move_left_right
+            if data[0] < -179:
+                data[0] += 360
+            self.ll = ','.join(list(map(str, data)))
+        elif event.key() == Qt.Key_Right:
+            data = list(map(float, self.ll.split(',')))
+            spn = list(map(float, self.spn.split(',')))
+            data[0] += spn[0] * delta_move_left_right
+            if data[0] > 179:
+                data[0] -= 360
+            self.ll = ','.join(list(map(str, data)))
+        else:
+            return
 
+        self.update_image()
+        print(f'spn={self.spn}, ll={self.ll}')
     def getImage(self):
         map_api_server = "http://static-maps.yandex.ru/1.x/"
         map_params = {
